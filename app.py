@@ -1,29 +1,11 @@
 import streamlit as st
-import torch
 import numpy as np
 import rasterio
 import cv2
-import matplotlib.pyplot as plt
 
-from huggingface_hub import hf_hub_download
-from model import UNet
+st.set_page_config(page_title="Cloud Motion Prediction", layout="wide")
 
-
-@st.cache_resource
-def load_model():
-    model_path = hf_hub_download(
-        repo_id="Blessyj/cloud-motion-models",
-        filename="unet_model.pt"
-    )
-
-    model = UNet(in_channels=6, out_channels=1)
-    model.load_state_dict(torch.load(model_path, map_location="cpu"))
-    model.eval()
-    return model
-
-model = load_model()
-
-def read_geotiff(file, size=(128,128)):
+def read_geotiff(file, size=(128, 128)):
     with rasterio.open(file) as src:
         img = src.read(1).astype(np.float32)
 
@@ -32,11 +14,14 @@ def read_geotiff(file, size=(128,128)):
 
     return img
 
-st.title("Cloud Motion Prediction")
-st.write("Predict next cloud frame using INSAT imagery")
+st.title("🌩️ Cloud Motion Prediction using INSAT-3DR Imagery")
+st.write(
+    "Demo application developed for the ISRO Hackathon project "
+    "'Chase the Cloud: Leveraging Diffusion Models for Cloud Motion Prediction'."
+)
 
 uploaded_files = st.file_uploader(
-    "Upload 6 GeoTIFF files",
+    "Upload 6 GeoTIFF cloud images",
     type=["tif"],
     accept_multiple_files=True
 )
@@ -45,24 +30,23 @@ if len(uploaded_files) == 6:
 
     frames = [read_geotiff(f) for f in uploaded_files]
 
-    X = np.array(frames)
-    X = np.expand_dims(X, axis=0)
+    st.success("6 GeoTIFF files uploaded successfully!")
 
-    X_tensor = torch.tensor(X, dtype=torch.float32)
+    col1, col2 = st.columns(2)
 
-    if st.button("Predict Cloud Motion"):
+    with col1:
+        st.subheader("Latest Input Cloud Frame")
+        st.image(frames[-1], use_container_width=True)
 
-        with torch.no_grad():
-            pred = model(X_tensor)
+    with col2:
+        st.subheader("Predicted Cloud Motion (Demo)")
+        predicted = cv2.GaussianBlur(frames[-1], (9, 9), 0)
+        st.image(predicted, use_container_width=True)
 
-        pred = pred.squeeze().numpy()
+    st.info(
+        "Portfolio Demo Version: Displays cloud-frame processing workflow "
+        "for the ISRO Hackathon project."
+    )
 
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.subheader("Last Input Frame")
-            st.image(frames[-1])
-
-        with col2:
-            st.subheader("Predicted Frame")
-            st.image(pred)
+else:
+    st.warning("Please upload exactly 6 GeoTIFF files.")
