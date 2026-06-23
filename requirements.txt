@@ -1,9 +1,4 @@
 streamlit
-torch
 numpy
 opencv-python-headless
 rasterio
-matplotlib
-scikit-image
-scikit-learn
-huggingface_hub
