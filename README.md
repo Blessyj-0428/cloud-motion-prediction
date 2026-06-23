@@ -72,9 +72,11 @@ Future Enhancements:
 * Deployment with full inference pipeline
 
 Author
+
 Blessy Margret J
 B.Tech Computer Science and Business Systems
 Mohmaed Sathak Engineering College,Ramanathapuram,TamilNadu,India
 
-Acknowledgement:
+Acknowledgement
+
  This project was developed as part of an ISRO Hackathon initiative to explore AI-driven approaches for satellite-based weather forecasting and cloud motion prediction.
