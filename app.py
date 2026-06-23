@@ -5,13 +5,19 @@ import rasterio
 import cv2
 import matplotlib.pyplot as plt
 
-# Load model
+from huggingface_hub import hf_hub_download
+from model import UNet
+
+
 @st.cache_resource
 def load_model():
-    model = UNet(in_channels=6, out_channels=1)
-    model.load_state_dict(
-        torch.load("unet_epoch50.pth", map_location="cpu")
+    model_path = hf_hub_download(
+        repo_id="Blessyj/cloud-motion-models",
+        filename="unet_model.pt"
     )
+
+    model = UNet(in_channels=6, out_channels=1)
+    model.load_state_dict(torch.load(model_path, map_location="cpu"))
     model.eval()
     return model
 
