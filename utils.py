@@ -11,14 +11,14 @@ def load_frames(files):
     stack = []
     for file in files:
         with rasterio.open(file) as src:
-            frame = src.read(1).astype(np.float32) / 255.0  # Normalize
+            frame = src.read(1).astype(np.float32) / 255.0  
             stack.append(frame)
-    input_tensor = np.stack(stack)  # Shape: (6, H, W)
-    return torch.tensor(input_tensor).unsqueeze(0)  # (1, 6, H, W)
+    input_tensor = np.stack(stack)  
+    return torch.tensor(input_tensor)
 
 
 def load_unet(path="models/unet_model.pt", device="cpu"):
-    from app import UNet  # assumes UNet is defined in app.py
+    from model import UNet  
     model = UNet(in_channels=6, out_channels=1)
     model.load_state_dict(torch.load(path, map_location=device))
     model.eval()
@@ -26,7 +26,7 @@ def load_unet(path="models/unet_model.pt", device="cpu"):
 
 
 def load_ddpm(path="models/ddpm_model.pt", device="cpu"):
-    from app import UNet, DDPM  # assumes DDPM is defined in app.py
+    from model import UNet, DDPM  
     unet = UNet(in_channels=6, out_channels=1)
     ddpm = DDPM(denoise_model=unet)
     ddpm.load_state_dict(torch.load(path, map_location=device))
