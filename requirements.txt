@@ -1,6 +1,9 @@
 streamlit
 torch
 numpy
-opencv-python
+opencv-python-headless
 rasterio
 matplotlib
+scikit-image
+scikit-learn
+huggingface_hub
